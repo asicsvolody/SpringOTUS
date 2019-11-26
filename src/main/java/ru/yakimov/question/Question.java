@@ -5,33 +5,55 @@
  */
 
 package ru.yakimov.question;
-import ru.yakimov.answer.Answer;
-import ru.yakimov.answer.Answerar;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Question implements Questioner{
     private String question;
-    private List<Answerar> answers;
+    private List<Answer> answers;
 
-    public Question(String question, Answerar... answers) {
-        this.question = question;
-        this.answers = Arrays.asList(answers);
+    //    ---question---,---trueAns---,---falseAns1---,---falseAns2---,---falseAns3---
+    public Question(String line) {
+        String[] dataArr = line.split(",");
+        this.question = dataArr[0].trim();
+        this.answers = readAnswers(dataArr[1], Arrays.copyOfRange(dataArr, 2, dataArr.length));
+    }
+
+    public String getQuestion() {
+        return question;
     }
 
     @Override
-    public void askQuestion(){
+    public boolean askQuestion(Scanner in){
         System.out.println(question);
-        for (Answerar answer : answers) {
+        for (Answer answer : answers) {
             answer.printAnswer();
         }
+        return isTrue(in.nextInt());
+
     }
 
-    @Override
-    public boolean isTrue(int answer){
+    private List<Answer> readAnswers(String trueAns, String ... falseAns){
+        final int countAnswer = falseAns.length + 1;
+        int numberOfAnswer = ((int) (Math.random() * countAnswer-1))+1;
+
+        List<Answer> resList = new ArrayList<>(countAnswer);
+        resList.add(new Answer(numberOfAnswer, trueAns.trim(), true));
+
+        for (String falseAn : falseAns) {
+            numberOfAnswer = (numberOfAnswer == countAnswer) ? 1 : numberOfAnswer + 1;
+            resList.add(new Answer(numberOfAnswer, falseAn.trim(), false));
+        }
+        return resList
+                .stream()
+                .sorted(Comparator.comparingInt(Answer::getNumber))
+                .collect(Collectors.toList());
+    }
+
+    private boolean isTrue(int answer){
         return answers.stream()
                 .filter(v -> v.getNumber() == answer)
-                .anyMatch(Answerar::isTrue);
+                .anyMatch(Answer::isTrue);
     }
 }

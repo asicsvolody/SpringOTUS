@@ -4,8 +4,8 @@
  * E-mail: yakimovvn@bk.ru
  */
 
-package ru.yakimov.answer;
-public class Answer implements Answerar{
+package ru.yakimov.question;
+public class Answer{
     private int number;
     private String answer;
     private boolean isTrue;
@@ -16,17 +16,12 @@ public class Answer implements Answerar{
         this.isTrue = isTrue;
     }
 
-    @Override
     public void printAnswer(){
         System.out.printf("%d) %s\n", number, answer);
     }
-
-    @Override
     public int getNumber() {
         return number;
     }
-
-    @Override
     public boolean isTrue() {
         return isTrue;
     }

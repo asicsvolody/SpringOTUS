@@ -6,10 +6,12 @@
 
 package ru.yakimov.tester;
 
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Service;
-import ru.yakimov.question.Question;
+import ru.yakimov.quesReader.QuestionReader;
 import ru.yakimov.question.Questioner;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -21,9 +23,9 @@ public class Tester {
     private String name;
     private String surname;
 
-    public Tester(AnswerCalculator answerCalculator, List<Questioner> questions) {
+    public Tester(AnswerCalculator answerCalculator, QuestionReader questionRider) throws IOException {
         this.answerCalculator = answerCalculator;
-        this.questions = questions;
+        this.questions = questionRider.readCsvQuestions();
     }
 
     public void testing(){
@@ -33,17 +35,20 @@ public class Tester {
         System.out.print("\nSurname: ");
         surname = in.nextLine();
 
-        int answer;
         for (Questioner question : questions) {
-            question.askQuestion();
-            answer = in.nextInt();
-            if(question.isTrue(answer))
+            if(ask(question,in))
                 answerCalculator.addTrue();
-
         }
-        System.out.printf("Results %s %s is %d",name,surname,answerCalculator.getTrueAnswers());
-
+        System.out.printf("Results %s %s is %d\n",name,surname,answerCalculator.getTrueAnswers());
         in.close();
+    }
+
+    public boolean ask(Questioner question, Scanner in){
+        return question.askQuestion(in);
+    }
+
+    public void askFirst(){
+        System.out.println("Hello!!!!!!");
     }
 
 }

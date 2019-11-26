@@ -6,7 +6,8 @@
 
 package ru.yakimov.question;
 
+import java.util.Scanner;
+
 public interface Questioner {
-    void askQuestion();
-    boolean isTrue(int answer);
+    boolean askQuestion(Scanner in);
 }
